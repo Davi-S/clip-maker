@@ -48,7 +48,6 @@ class ClipMaker:
         return
 
     def save_clip(self) -> None:
-        global CLIP_SAVING_PATH
         folder_name = f"{self.next_folder_number:04d}"
         os.makedirs(CLIP_SAVING_PATH + folder_name)
         for i, image in enumerate(self.clips[0]):  # oldest clip
