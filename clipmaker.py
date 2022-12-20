@@ -5,13 +5,6 @@ from keyboard import on_release
 from threading import Thread
 from settings import *
 
-CLIP_SAVING_PATH = "C:\\Users\\Davi Sampaio\\Documents\\programação\\trigger-bot\\by-ai\\data-management\\data-p3\\"
-
-CAPTURE_INTERVAL = 0.2
-CAPTURE_PAST_TIME = 10
-
-HOT_KEYS = {'trigger': 'insert', 'quit': 'end'}
-
 
 def next_folder_number() -> None:
     counter = 1
