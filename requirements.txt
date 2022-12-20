@@ -1,0 +1,5 @@
+time
+PIL
+keyboard
+os
+threading
