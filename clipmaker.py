@@ -21,8 +21,11 @@ class ClipMaker:
         self.capture_past_time: float = capture_past_time  # In seconds
         self.hot_keys: dict = hot_keys
         self.buffer: list[Image.Image] = []
-        self.clips: list[list[Image.Image]] = []
+        self.clip: list[Image.Image] = []
         self.stop: bool = False
+        
+        # run the next_folder_number function before start the screen capture.
+        # this way the program does not need to do a loop every time before save the clip; it only need to increase a counter
         self.next_folder_number = next_folder_number()
 
     def capture_screen(self) -> None:
@@ -43,38 +46,43 @@ class ClipMaker:
         return
 
     def get_clip(self) -> None:
-        self.clips.append(list(self.buffer))  # add clip to the end of the list
+        """save the actual state of the buffer"""
+        self.clip = list(self.buffer)
         print('clip got')
         return
 
-    def save_clip(self) -> None:
+     def save_clip(self) -> None:
+        """Save each image of the clip in a folder"""
+        # create folder
         folder_name = f"{self.next_folder_number:04d}"
-        os.makedirs(CLIP_SAVING_PATH + folder_name)
-        for i, image in enumerate(self.clips[0]):  # oldest clip
-            image.save(os.path.join(CLIP_SAVING_PATH +
-                                    folder_name, f"image{i}.png"))
-
-        self.clips.pop(0)  # remove the clip saved
+        os.makedirs(CLIP_SAVING_PATH + folder_name)  
+        print('folder created')
+        
+        for i, image in enumerate(self.clip):  # oldest clip
+            image.save(os.path.join(CLIP_SAVING_PATH + folder_name, f"image{i}.png"))
         self.next_folder_number += 1
         print('clip saved')
         return
 
     def on_key(self, key) -> None:
+        """React to keyboard events"""
         if key.name == self.hot_keys['trigger']:
             print('trigger key pressed')
             self.get_clip()
             self.save_clip()
+            return
 
         if key.name == self.hot_keys['quit']:
             print('end key pressed')
-            self.stop = True            
+            self.stop = True
+            return     
 
 
 def main() -> int:
     print('main started')
     clipmaker = ClipMaker(CAPTURE_INTERVAL, CAPTURE_PAST_TIME, HOT_KEYS)
     Thread(target=clipmaker.capture_screen, name="capture_screen").start()
-    
+
     print('started listening to keyboard')
     on_release(clipmaker.on_key)
     return 0
